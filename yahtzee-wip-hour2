@@ -1,0 +1,199 @@
+#include <iostream> // for cin, cout and getline
+#include <string> // to use strings
+#include <time.h>	// seeding random number generator
+#include <Windows.h>	// sleep command
+#include "ICS_ConsoleHelper.h"	// colors and clearing console
+
+using namespace std;	// for cin, cout and getline
+
+string input;	// string for inputs
+string reroll;	// string for the reroll 
+int totalChanceChance = 0;	// storage for the chance points
+int totalThreeKindPoints = 0;	// storage for the three of a kind points
+int totalFourKindPoints = 0;	// storage for the four of a kind points
+int diceNumber = 0;
+const int ARRAY_LENGHT = 5;		// constant that holds the lenght of 'diceArray'	
+const int yahtzee = 50;		// constant that holds the points of a yahtzee
+const int fullHouse = 25;	// constant that holds the points of a fullhouse
+const int smallStraight = 30;	// constant that holds the points of a small straight
+const int largeStraight = 40;	// constant that holds the points of a large straight
+
+
+int pointIndex = 0;																		
+int points[13];
+
+
+int diceArray[5] = { 0,0,0,0,0 };	// array that will hold the value of the dice
+int winningPoints = 100;	// points required to win	
+int currentPoints = 0;	// current points of the player
+bool specialText[5] = { false,false,false,false,false };	// to make changed die green
+bool regularText[5] = { false,false,false,false,false };	// white text
+
+void rerollDice(int arrayLenght, int diceArray[5], bool specialText[5], bool regularText[5])	// void that stores everything required to reroll the dice
+{
+	for (int i = 1; i < arrayLenght + 1; i++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		cout << "Do you want to reroll die #" << i << " ? (value of die #" << i << " is " << diceArray[i - 1] << "): ";	// Asks the user if they want to reroll
+		getline(cin, input);	// gets and stores the input
+		if (input == "y" or input == "Y")	// if input is yes then
+		{
+			diceNumber = i - 1;	// 'diceNumber' is reduced by 1
+			int random = rand() % (6 - 1 + 1) + 1;	// a random value from 1 to 6 gets stored into 'random'
+			diceArray[i - 1] = random;	// changes array placement of 'i-1' to whatever random is
+			specialText[i - 1] = true;	// die was rerolled so it counts as special text
+		}
+	}
+	cout << endl;	// space 
+	for (int o = 0; o < arrayLenght; o++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		if (specialText[o] == true)	// checks if the text is special
+		{
+			cout << ICS_INTENSE_GREEN_TEXT;	// set color to green
+			cout << "Dice #" << o + 1 << " is: " << diceArray[o] << ICS_WHITE_TEXT << endl;	// prints the new value and sets color to white
+		}
+		else  // if text isnt special
+		{
+			cout << "Dice #" << o + 1 << " is: " << diceArray[o] << endl;	// prints the result
+		}
+	}
+	for (int i = 0; i < arrayLenght; i++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		specialText[i] = false;	// sets every spot of 'specialText' to false
+	}
+	cout << endl;	// space
+
+
+}
+
+void cashoutPoints(int oneCounter, int twoCounter, int threeCounter, int fourCounter, int fiveCounter, int sixCounter, int totalChance)	// void that stores everything required to calculate and cashout points
+{
+	int i = 65;	// sets 'i' to '65' which is 'A'
+	char aChar = 0 + i;	// make the number be an actual character/letter
+	if (oneCounter > 0)	// checks if theres atleast a 1
+	{
+		cout << aChar << " You have " << oneCounter << " one(s) \t= " << oneCounter << " points!" << endl;	// prints how many they have and then calculates the points
+		aChar++;	// increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = oneCounter;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (twoCounter > 0)	// checks if theres atleast a 2
+	{
+		cout << aChar << " You have " << twoCounter << " two(s) \t= " << twoCounter * 2 << " points!" << endl; // prints how many they have and then calculates the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = twoCounter * 2;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (threeCounter > 0)	// checks if theres atleast a 3
+	{
+		cout << aChar << " You have " << threeCounter << " three(s) \t= " << threeCounter * 3 << " points!" << endl; // prints how many they have and then calculates the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = threeCounter * 3;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (fourCounter > 0)	// checks if theres atleast a 4
+	{
+		cout << aChar << " You have " << fourCounter << " four(s) \t= " << fourCounter * 4 << " points!" << endl; // prints how many they have and then calculates the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = fourCounter * 4;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (fiveCounter > 0)	// checks if theres atleast a 5
+	{
+		cout << aChar << " You have " << fiveCounter << " five(s) \t= " << fiveCounter * 5 << " points!" << endl; // prints how many they have and then calculates the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = fiveCounter * 5;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (sixCounter > 0)	// checks if theres atleast a 6
+	{
+		cout << aChar << " You have " << sixCounter << " six(s) \t= " << sixCounter * 6 << " points!" << endl; // prints how many they have and then calculates the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = sixCounter * 6;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (oneCounter >= 3 or twoCounter >= 3 or threeCounter >= 3 or fourCounter >= 3 or fiveCounter >= 3 or sixCounter >= 3)	// checks for three of a kind
+	{
+		for (int i = 0; i < ARRAY_LENGHT; i++)	// for loop that doesnt go over the lenght of 'diceArray'
+		{
+			totalThreeKindPoints = totalThreeKindPoints + diceArray[i]; // adds the points to the storage function 'totalThreeKindPoints'
+		}
+		cout << aChar << " You got three of a kind \t= " << totalThreeKindPoints << " points!" << endl;	// lets the user know that the got three of a kind and then prints the total points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = totalThreeKindPoints;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+
+	if (oneCounter >= 4 or twoCounter >= 4 or threeCounter >= 4 or fourCounter >= 4 or fiveCounter >= 4 or sixCounter >= 4)	// checks for four of a kind
+	{
+		for (int i = 0; i < ARRAY_LENGHT; i++) // for loop that doesnt go over the lenght of 'diceArray'
+		{
+			totalFourKindPoints = totalFourKindPoints + diceArray[i];  // adds the points to the storage function 'totalFourKindPoints'
+		}
+		cout << aChar << " You got four of a kind \t= " << totalFourKindPoints << " points!" << endl; 	// lets the user know that they got three of a kind and then prints the total points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = totalFourKindPoints;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+	if (oneCounter == 3 or twoCounter == 3 or threeCounter == 3 or fourCounter == 3 or fiveCounter == 3 or sixCounter == 3 and oneCounter == 2 or twoCounter == 2 or threeCounter == 2 or fourCounter == 2 or fiveCounter == 2 or sixCounter == 2)	// checks for full house
+	{
+		cout << aChar << " You got a full house \t= " << fullHouse << " points! " << endl;	// lets the user know that the got a full house and then prints the total points
+		aChar++;	// increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = fullHouse;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+
+	if (diceArray[0] == 1 and diceArray[1] == 2 and diceArray[2] == 3 and diceArray[3] == 4 or diceArray[0] == 2 and diceArray[1] == 3 and diceArray[2] == 4 and diceArray[3] == 5 or diceArray[0] == 3 and diceArray[1] == 4 and diceArray[2] == 5 and diceArray[3] == 6 or diceArray[4] == 6 and diceArray[3] == 5 and diceArray[2] == 4 and diceArray[1] == 3 or diceArray[4] == 5 and diceArray[3] == 4 and diceArray[2] == 3 and diceArray[1] == 2 or diceArray[4] == 4 and diceArray[3] == 3 and diceArray[2] == 2 and diceArray[1] == 1) // checks for small straight
+	{
+		cout << aChar << " You got a small straight \t= " << smallStraight << " points!" << endl; // lets the user know that the got a small straight and then prints the total points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = smallStraight;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+
+	if (diceArray[0] == 1 and diceArray[1] == 2 and diceArray[2] == 3 and diceArray[3] == 4 and diceArray[4] == 5 or diceArray[0] == 2 and diceArray[1] == 3 and diceArray[2] == 4 and diceArray[3] == 5 and diceArray[4] == 6)	// checks for large straight
+	{
+		cout << aChar << " You got a large straight \t= " << largeStraight << " points!" << endl;// lets the user know that the got a large straight and then prints the total points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = largeStraight;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+
+	if (oneCounter >= 5 or twoCounter >= 5 or threeCounter >= 5 or fourCounter >= 5 or fiveCounter >= 5 or sixCounter >= 5)	// checks for yahtzee
+	{
+		cout << aChar << " You got a yahtzee \t= " << yahtzee << " points!" << endl;	// lets the user that the got a yahtzee and then prints the points
+		aChar++; // increases char by 1 so the letter changes (A to B, etc)
+		points[pointIndex] = yahtzee;	// sets the points on the spot of 'pointIndex'
+		pointIndex++;	// increases 'pointIndex' by 1 
+	}
+
+	for (int i = 0; i < ARRAY_LENGHT; i++) // for loop that doesnt go over the lenght of 'diceArray'
+	{
+		totalChance = totalChance + diceArray[i];  // adds the points to the storage function 'totalChance'
+	}
+	cout << aChar << " Would you like to take your chance? \t= " << totalChance << " points!" << endl;	// lets the user know that they can cash out their points for the calculated total
+	aChar++; // increases char by 1 so the letter changes (A to B, etc)
+	points[pointIndex] = totalChance;	// sets the points on the spot of 'pointIndex'
+	pointIndex++;	// increases 'pointIndex' by 1 
+	cout << endl; //space
+}
+void choose()
+{
+	string input;	// creates another input to make sure no interference is possible
+	cout << "What option do you want to choose (reply with the capital letter of what you want to do): ";	// asks for input
+	getline(cin, input);	// get the input
+	if (input.length() > 0)	// checks if theres something in the input string, if there is then
+	{
+		int spot = input[0];	// sets 'spot' to the first character in 'input'
+		spot = spot - 65;	// removes 65 to be able to fit the numerical value on 'points'
+		system("cls");	// clears screen
+		cout << "You chose option " << input << endl;	// shows what option was chosen
+		currentPoints += points[spot];	// sets 'currentPoints' to its value + the points stored on 'points' at the spot chosen
+		cout << currentPoints << "   " << points[spot] << endl;
+		cout << "Now you have " << currentPoints << " points! " << endl;	// prints the new ammount of points that the user have
+	}
+	else // if theres nothing on the string input
+	{
+		cout << " No option chosen!" << endl;	// prints that message
+	}
+	
+}
