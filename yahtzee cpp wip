@@ -1,0 +1,71 @@
+#include <iostream> // for cin, cout and getline
+#include <string> // to use strings
+#include <time.h>	// seeding random number generator
+#include <Windows.h>	// sleep command
+#include "ICS_ConsoleHelper.h"	// colors and clearing console
+
+using namespace std;	// for cin, cout and getline
+
+string input;	// string for inputs
+string reroll;	// string for the reroll 
+int totalChanceChance = 0;	// storage for the chance points
+int totalThreeKindPoints = 0;	// storage for the three of a kind points
+int totalFourKindPoints = 0;	// storage for the four of a kind points
+int diceNumber = 0;
+const int ARRAY_LENGHT = 5;		// constant that holds the lenght of 'diceArray'	
+const int yahtzee = 50;		// constant that holds the points of a yahtzee
+const int fullHouse = 25;	// constant that holds the points of a fullhouse
+const int smallStraight = 30;	// constant that holds the points of a small straight
+const int largeStraight = 40;	// constant that holds the points of a large straight
+
+
+int pointIndex = 0;																		
+int points[13];
+
+
+int diceArray[5] = { 0,0,0,0,0 };	// array that will hold the value of the dice
+int winningPoints = 100;	// points required to win	
+int currentPoints = 0;	// current points of the player
+bool specialText[5] = { false,false,false,false,false };	// to make changed die green
+bool regularText[5] = { false,false,false,false,false };	// white text
+
+void rerollDice(int arrayLenght, int diceArray[5], bool specialText[5], bool regularText[5])	// void that stores everything required to reroll the dice
+{
+	for (int i = 1; i < arrayLenght + 1; i++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		cout << "Do you want to reroll die #" << i << " ? (value of die #" << i << " is " << diceArray[i - 1] << "): ";	// Asks the user if they want to reroll
+		getline(cin, input);	// gets and stores the input
+		if (input == "y" or input == "Y")	// if input is yes then
+		{
+			diceNumber = i - 1;	// 'diceNumber' is reduced by 1
+			int random = rand() % (6 - 1 + 1) + 1;	// a random value from 1 to 6 gets stored into 'random'
+			diceArray[i - 1] = random;	// changes array placement of 'i-1' to whatever random is
+			specialText[i - 1] = true;	// die was rerolled so it counts as special text
+		}
+	}
+	cout << endl;	// space 
+	for (int o = 0; o < arrayLenght; o++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		if (specialText[o] == true)	// checks if the text is special
+		{
+			cout << ICS_INTENSE_GREEN_TEXT;	// set color to green
+			cout << "Dice #" << o + 1 << " is: " << diceArray[o] << ICS_WHITE_TEXT << endl;	// prints the new value and sets color to white
+		}
+		else  // if text isnt special
+		{
+			cout << "Dice #" << o + 1 << " is: " << diceArray[o] << endl;	// prints the result
+		}
+	}
+	for (int i = 0; i < arrayLenght; i++)	// for loop that doesnt go over the lenght of 'diceArray'
+	{
+		specialText[i] = false;	// sets every spot of 'specialText' to false
+	}
+	cout << endl;	// space
+
+
+}
+
+void cashoutPoints(int oneCounter, int twoCounter, int threeCounter, int fourCounter, int fiveCounter, int sixCounter, int totalChance)	// void that stores everything required to calculate and cashout points
+{
+	int i = 65;	// sets 'i' to '65' which is 'A'
+	char aChar = 0 + i;	// make the number be an actual character/letter
